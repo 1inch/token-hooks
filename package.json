@@ -51,7 +51,8 @@
     "test:ci": "hardhat test"
   },
   "resolutions": {
-    "elliptic": "6.6.1"
+    "elliptic": "6.6.1",
+    "form-data": "4.0.4"
   },
   "files": [
     "contracts",
