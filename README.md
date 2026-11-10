@@ -64,7 +64,7 @@ Here are some examples of how Token Hooks is currently being (or could be used) 
 - **Hook Quantity**: The contract deployer should establish a limit on the number of hooks managed under the hook management contract.
 - **Maximum gas usage**: `HOOK_CALL_GAS_LIMIT` caps the gas of each `updateBalances` call. The value is set in the token constructor and cannot be changed later. A call that runs out of gas is skipped, and the token transfer still succeeds, so the hook's own accounting can miss the balance change.
 
-> **Glamsterdam.** After the gas repricing in EIP-8037 and EIP-8038, previos recommended 140,000 is not enough for a hook that writes storage for a new account. A new storage slot costs about 108,000 gas. An `updateBalances` that writes one new slot needs about 142,000–152,000 gas, and one that writes two needs up to about 276,000. Measure the hook's most expensive `updateBalances` (a first-time account, cold slots) and set the limit above that cost. 300,000 covers a hook that writes two new slots. 500,000 is the limit st1INCH uses. A higher limit also lets one hook burn more gas on every transfer.
+> **Glamsterdam.** After the gas repricing in EIP-8037 and EIP-8038, previously recommended 140,000 is not enough for a hook that writes storage for a new account. A new storage slot costs about 108,000 gas. An `updateBalances` that writes one new slot needs about 142,000–152,000 gas, and one that writes two needs up to about 276,000. Measure the hook's most expensive `updateBalances` (a first-time account, cold slots) and set the limit above that cost. 300,000 covers a hook that writes two new slots. 500,000 is the limit st1INCH uses. A higher limit also lets one hook burn more gas on every transfer.
 
 - **Only works with transferrable tokens**: By fundamental design, hooks are unable to integrate with tokens whose balances can update without transfers (such as rebase tokens).
 
@@ -114,7 +114,7 @@ import { ERC20Hooks } from "@1inch/token-hooks/contracts/ERC20Hooks.sol";
 contract MyToken is ERC20, ERC20Hooks {
     constructor(string memory name, string memory symbol)
         ERC20(name, symbol)
-        ERC20Hooks(10, 500000) // Max 10 hooks, 500k gas limit per hook.
+        ERC20Hooks(10, 500000) // Max 10 hooks, 500k gas limit per hook
     {}
 
     function mint(address account, uint256 amount) external {
@@ -135,7 +135,7 @@ contract TokenWrapper is ERC20Wrapper, ERC20Hooks {
     constructor(IERC20 underlyingToken)
         ERC20("Wrapped Token", "wTKN")
         ERC20Wrapper(underlyingToken)
-        ERC20Hooks(10, 500000) // Max 10 hooks, 500k gas limit per hook.
+        ERC20Hooks(10, 500000) // Max 10 hooks, 500k gas limit per hook
     {}
 }
 ```
