@@ -131,18 +131,8 @@ abstract contract ERC20Hooks is ERC20, IERC20Hooks, ReentrancyGuardExt {
     }
 
     function _removeAllHooks(address account) internal virtual {
-        address[] memory hookItems = _hooks[account].items.get();
-        uint256 balance = balanceOf(account);
-        unchecked {
-            uint256 i = hookItems.length;
-            while (i > 0) {
-                address item = hookItems[--i];
-                _hooks[account].remove(item);
-                emit HookRemoved(account, item);
-                if (balance > 0) {
-                    _updateBalances(item, account, address(0), balance);
-                }
-            }
+        while (_hooks[msg.sender].length() > 0) {
+            _removeHook(msg.sender, _hooks[msg.sender].at(_hooks[msg.sender].length() - 1));
         }
     }
 
