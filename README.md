@@ -19,6 +19,8 @@
 ## Overview
 > **Note:** Token Hooks were previously known as Token Plugins. The name was changed to better reflect the nature of the functionality.
 
+> **Glamsterdam.** After the gas repricing in EIP-8037 and EIP-8038, previously recommended 140,000 is not enough for a hook that writes storage for a new account. A new storage slot costs about 108,000 gas. An `updateBalances` that writes one new slot needs about 142,000–152,000 gas, and one that writes two needs up to about 276,000. Measure the hook's most expensive `updateBalances` (a first-time account, cold slots) and set the limit above that cost. 300,000 covers a hook that writes two new slots. 500,000 is the limit st1INCH uses. A higher limit also lets one hook burn more gas on every transfer.
+
 Token hooks are smart contracts that extend the capabilities of ERC20 tokens and wrappers by adding custom accounting features to the original token. Inspired by the hook concept widely used in the web 2.0 world, these hooks enable users to **dynamically increase the functionality of their tokens on-demand** without the need to transfer tokens to a special smart contract.
 
 The major benefit, and a key difference from existing solutions, is that these do not require token transfers to a special smart contract, as is commonly seen in farming or delegating protocols. Another beneficial point is that once an ERC20 hook code is deployed, it can be reused by any tokens that support the 1inch hook standard.
@@ -63,8 +65,6 @@ Here are some examples of how Token Hooks is currently being (or could be used) 
 - Any hook's processing logic consumes additional gas, with external operations that change an account balance incurring higher costs. To mitigate this, the hook extension sets a limit on the gas consumption per hook and caps the maximum amount of gas that can be spent.
 - **Hook Quantity**: The contract deployer should establish a limit on the number of hooks managed under the hook management contract.
 - **Maximum gas usage**: `HOOK_CALL_GAS_LIMIT` caps the gas of each `updateBalances` call. The value is set in the token constructor and cannot be changed later. A call that runs out of gas is skipped, and the token transfer still succeeds, so the hook's own accounting can miss the balance change.
-
-> **Glamsterdam.** After the gas repricing in EIP-8037 and EIP-8038, previously recommended 140,000 is not enough for a hook that writes storage for a new account. A new storage slot costs about 108,000 gas. An `updateBalances` that writes one new slot needs about 142,000–152,000 gas, and one that writes two needs up to about 276,000. Measure the hook's most expensive `updateBalances` (a first-time account, cold slots) and set the limit above that cost. 300,000 covers a hook that writes two new slots. 500,000 is the limit st1INCH uses. A higher limit also lets one hook burn more gas on every transfer.
 
 - **Only works with transferrable tokens**: By fundamental design, hooks are unable to integrate with tokens whose balances can update without transfers (such as rebase tokens).
 
